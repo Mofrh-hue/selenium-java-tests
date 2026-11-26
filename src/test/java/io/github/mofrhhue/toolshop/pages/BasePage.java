@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import io.github.mofrhhue.toolshop.core.Config;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -19,6 +20,9 @@ public abstract class BasePage {
     protected BasePage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Config.timeout());
+        // The shop redraws the product grid after sorting or filtering. An element read during
+        // the redraw goes stale; the wait should then try again instead of failing.
+        this.wait.ignoring(StaleElementReferenceException.class);
     }
 
     protected static By testId(String id) {
